@@ -1,42 +1,54 @@
-# Task Manager REST API (Golang)
+🚀 Task Manager REST API (Golang)
 
-A production-style Task Management Service built in Go using Gin, GORM, PostgreSQL, JWT authentication, Role-Based Access Control, background workers with goroutines & channels, pagination, filtering, Swagger docs, Docker support, and clean architecture.
+A production-style Task Management Service built in Go using Gin, GORM, PostgreSQL, JWT authentication, Role-Based Access Control, background workers (goroutines & channels), pagination, filtering, Swagger docs, Docker, and clean architecture.
 
----
+✨ Features
 
-## 🚀 Features
+JWT Authentication (Register / Login)
 
-* JWT Authentication (Register / Login)
-* Role Based Access Control (User / Admin)
-* Task CRUD APIs
-* Background Worker: auto-completes tasks after X minutes
-* Pagination & filtering
-* Clean architecture (handler → service → repository)
-* Context usage in all layers
-* UUID for IDs
-* Unit tests with mocks
-* Swagger (OpenAPI) documentation
-* Graceful shutdown
-* Dockerfile
+Role Based Access Control (User / Admin)
 
----
+Task CRUD APIs
 
-## 🧱 Tech Stack
+Background Worker: auto-completes tasks after X minutes
 
-* Go
-* Gin
-* GORM
-* PostgreSQL
-* JWT
-* Goroutines & Channels
-* Swagger (swaggo)
-* Docker
+Pagination & filtering support
 
----
+Clean Architecture (Handler → Service → Repository)
 
-## 📁 Project Structure
+Context propagation across layers
 
-```
+UUID for primary keys
+
+Unit tests using mocks & interfaces
+
+Swagger (OpenAPI) documentation
+
+Graceful server shutdown
+
+Docker support
+
+Makefile for standardized commands
+
+🧰 Tech Stack
+
+Go (Golang)
+
+Gin Web Framework
+
+GORM ORM
+
+PostgreSQL
+
+JWT Authentication
+
+Goroutines & Channels
+
+Swagger (swaggo)
+
+Docker
+
+📁 Project Structure
 cmd/
 config/
 models/
@@ -47,119 +59,108 @@ middleware/
 worker/
 utils/
 docs/
-```
+Makefile
+Dockerfile
 
----
+⚙️ Environment Variables (.env)
 
-## ⚙️ Environment Variables (.env)
+Create a .env file in root:
 
-```
 DB_URL=postgres://dipak:123456@localhost:5432/taskdb?sslmode=disable
 JWT_SECRET=supersecret
 AUTO_COMPLETE_MINUTES=2
-```
+PORT=8080
 
----
+🐘 PostgreSQL Setup
+CREATE USER dipak WITH PASSWORD '123456';
+CREATE DATABASE taskdb OWNER dipak;
 
-## ▶️ Run Locally
+▶️ Run Locally (Developer Mode)
+make setup     # install swag & air (first time)
+make swag      # generate swagger docs
+make run       # start server
 
-```bash
-go mod tidy
-go run cmd/main.go
-```
 
 Swagger UI:
 
-```
 http://localhost:8080/swagger/index.html
-```
 
----
+🏗️ Build & Run Binary (Production Style)
+make build
+./bin/task-manager
 
-## 🐘 PostgreSQL Setup
 
-```sql
-CREATE USER dipak WITH PASSWORD '123456';
-CREATE DATABASE taskdb OWNER dipak;
-```
+or
 
----
+make start
 
-## 🔐 Authentication APIs
+🧪 Run Tests
+make test
 
-| Method | Endpoint  | Description   |
-| ------ | --------- | ------------- |
-| POST   | /register | Register user |
-| POST   | /login    | Get JWT token |
+🔐 Authentication APIs
+Method	Endpoint	Description
+POST	/register	Register new user
+POST	/login	Login & get JWT
+✅ Task APIs (JWT Required)
+Method	Endpoint	Description
+POST	/tasks	Create task
+GET	/tasks	List tasks (pagination & filtering)
+GET	/tasks/{id}	Get task by ID
+DELETE	/tasks/{id}	Delete task
 
----
+Query Parameters:
 
-## ✅ Task APIs (JWT Required)
-
-| Method | Endpoint    | Description                     |
-| ------ | ----------- | ------------------------------- |
-| POST   | /tasks      | Create task                     |
-| GET    | /tasks      | List tasks (pagination, filter) |
-| GET    | /tasks/{id} | Get task by ID                  |
-| DELETE | /tasks/{id} | Delete task                     |
-
-Query params:
-
-```
 /tasks?page=1&limit=10&status=pending
-```
 
----
-
-## ⚙️ Background Worker
+⚙️ Background Worker (Goroutines & Channels)
 
 When a task is created, its ID is pushed into a channel.
-A goroutine waits for **AUTO_COMPLETE_MINUTES** and automatically marks the task as `completed` if it is still `pending` or `in_progress`.
 
-This demonstrates Go concurrency using goroutines and channels without blocking API requests.
+A goroutine listens to the channel.
 
----
+After AUTO_COMPLETE_MINUTES, it marks the task as completed
+if still pending or in_progress.
 
-## 🧪 Unit Tests
+This demonstrates Go concurrency without blocking API requests.
 
-Service layer is tested using repository interfaces and mocks.
+📘 Swagger API Docs
 
-```bash
-go test ./... -v
-```
+After running:
 
----
+make swag
 
-## 🐳 Docker
 
-```bash
-docker build -t task-manager .
-docker run -p 8080:8080 task-manager
-```
+Open:
 
----
-
-## 📘 Swagger Docs
-
-Interactive API documentation available at:
-
-```
 /swagger/index.html
-```
 
----
+🐳 Docker Support
 
-## 🧠 Architecture Highlights
+Build image:
 
-* Repository pattern for DB abstraction
-* Service layer for business logic
-* Middleware for JWT
-* Interfaces for testability
-* Context passed across layers
-* Clean separation of concerns
+docker build -t task-manager .
 
----
 
-## 👨‍💻 Author
+Run container:
+
+docker run -p 8080:8080 --env-file .env task-manager
+
+🧠 Architecture Highlights (Interview Points)
+
+Repository pattern for DB abstraction
+
+Service layer for business logic
+
+Middleware for JWT authentication
+
+Interfaces for testability and mocking
+
+Context passed through all layers
+
+Graceful shutdown using context and http.Server
+
+Makefile for standardized development workflow
+
+👨‍💻 Author
 
 Dipak Bharade
