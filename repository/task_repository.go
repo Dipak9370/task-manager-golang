@@ -3,12 +3,21 @@ package repository
 import (
 	"context"
 	"task-manager/models"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type TaskRepository struct {
 	DB *gorm.DB
+}
+
+func (r *TaskRepository) AutoCompleteTasks(minutes int) error {
+	cutoff := time.Now().Add(-time.Duration(minutes) * time.Minute)
+
+	return r.DB.Model(&models.Task{}).
+		Where("status = ? AND created_at <= ?", "pending", cutoff).
+		Update("status", "completed").Error
 }
 
 func (r *TaskRepository) Create(ctx context.Context, task *models.Task) error {

@@ -12,14 +12,14 @@ type AuthHandler struct {
 }
 
 // Register godoc
-// @Summary Register new user
-// @Description Register user with email, password and role
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param request body map[string]string true "User Register"
-// @Success 200 {object} map[string]string
-// @Router /register [post]
+//	@Summary		Register new user
+//	@Description	Register user with email, password and role
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		map[string]string	true	"User Register"
+//	@Success		200		{object}	map[string]string
+//	@Router			/register [post]
 
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req struct {
@@ -43,14 +43,14 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 // Login godoc
-// @Summary Login user
-// @Description Login and get JWT token
-// @Tags Auth
-// @Accept json
-// @Produce json
-// @Param request body map[string]string true "User Login"
-// @Success 200 {object} map[string]string
-// @Router /login [post]
+//	@Summary		Login user
+//	@Description	Login and get JWT token
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		map[string]string	true	"User Login"
+//	@Success		200		{object}	map[string]string
+//	@Router			/login [post]
 
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req struct {

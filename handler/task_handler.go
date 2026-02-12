@@ -13,14 +13,14 @@ type TaskHandler struct {
 }
 
 // CreateTask godoc
-// @Summary Create task
-// @Tags Tasks
-// @Security BearerAuth
-// @Accept json
-// @Produce json
-// @Param request body map[string]string true "Create Task"
-// @Success 200 {object} map[string]string
-// @Router /tasks [post]
+//	@Summary	Create task
+//	@Tags		Tasks
+//	@Security	BearerAuth
+//	@Accept		json
+//	@Produce	json
+//	@Param		request	body		map[string]string	true	"Create Task"
+//	@Success	200		{object}	map[string]string
+//	@Router		/tasks [post]
 
 func (h *TaskHandler) CreateTask(c *gin.Context) {
 	var req struct {
@@ -56,11 +56,11 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 }
 
 // ListTasks godoc
-// @Summary List tasks
-// @Tags Tasks
-// @Security BearerAuth
-// @Produce json
-// @Router /tasks [get]
+//	@Summary	List tasks
+//	@Tags		Tasks
+//	@Security	BearerAuth
+//	@Produce	json
+//	@Router		/tasks [get]
 
 func (h *TaskHandler) ListTasks(c *gin.Context) {
 	userID := c.GetString("user_id")
@@ -80,12 +80,12 @@ func (h *TaskHandler) ListTasks(c *gin.Context) {
 }
 
 // DeleteTask godoc
-// @Summary Delete task
-// @Tags Tasks
-// @Security BearerAuth
-// @Produce json
-// @Param id path string true "Task ID"
-// @Router /tasks/{id} [delete]
+//	@Summary	Delete task
+//	@Tags		Tasks
+//	@Security	BearerAuth
+//	@Produce	json
+//	@Param		id	path	string	true	"Task ID"
+//	@Router		/tasks/{id} [delete]
 
 func (h *TaskHandler) DeleteTask(c *gin.Context) {
 	id := c.Param("id")

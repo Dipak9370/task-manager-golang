@@ -4,7 +4,7 @@ A production-style Task Management Service built in Go using Gin, GORM, PostgreS
 
 ---
 
-## 🚀 Features
+## Features
 
 * JWT Authentication (Register / Login)
 * Role Based Access Control (User / Admin)
@@ -21,7 +21,7 @@ A production-style Task Management Service built in Go using Gin, GORM, PostgreS
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 * Go
 * Gin
@@ -34,7 +34,7 @@ A production-style Task Management Service built in Go using Gin, GORM, PostgreS
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 cmd/
@@ -51,7 +51,7 @@ docs/
 
 ---
 
-## ⚙️ Environment Variables (.env)
+## Environment Variables (.env)
 
 ```
 DB_URL=postgres://dipak:123456@localhost:5432/taskdb?sslmode=disable
@@ -61,7 +61,7 @@ AUTO_COMPLETE_MINUTES=2
 
 ---
 
-## ▶️ Run Locally
+## Run Locally
 
 ```bash
 go mod tidy
@@ -76,7 +76,7 @@ http://localhost:8080/swagger/index.html
 
 ---
 
-## 🐘 PostgreSQL Setup
+## PostgreSQL Setup
 
 ```sql
 CREATE USER dipak WITH PASSWORD '123456';
@@ -85,7 +85,7 @@ CREATE DATABASE taskdb OWNER dipak;
 
 ---
 
-## 🔐 Authentication APIs
+## Authentication APIs
 
 | Method | Endpoint  | Description   |
 | ------ | --------- | ------------- |
@@ -94,7 +94,7 @@ CREATE DATABASE taskdb OWNER dipak;
 
 ---
 
-## ✅ Task APIs (JWT Required)
+## Task APIs (JWT Required)
 
 | Method | Endpoint    | Description                     |
 | ------ | ----------- | ------------------------------- |
@@ -111,7 +111,7 @@ Query params:
 
 ---
 
-## ⚙️ Background Worker
+## Background Worker
 
 When a task is created, its ID is pushed into a channel.
 A goroutine waits for **AUTO_COMPLETE_MINUTES** and automatically marks the task as `completed` if it is still `pending` or `in_progress`.
@@ -120,7 +120,7 @@ This demonstrates Go concurrency using goroutines and channels without blocking 
 
 ---
 
-## 🧪 Unit Tests
+## Unit Tests
 
 Service layer is tested using repository interfaces and mocks.
 
@@ -130,7 +130,7 @@ go test ./... -v
 
 ---
 
-## 🐳 Docker
+## Docker
 
 ```bash
 docker build -t task-manager .
@@ -139,7 +139,7 @@ docker run -p 8080:8080 task-manager
 
 ---
 
-## 📘 Swagger Docs
+## Swagger Docs
 
 Interactive API documentation available at:
 
@@ -149,7 +149,7 @@ Interactive API documentation available at:
 
 ---
 
-## 🧠 Architecture Highlights
+## Architecture Highlights
 
 * Repository pattern for DB abstraction
 * Service layer for business logic
@@ -160,6 +160,6 @@ Interactive API documentation available at:
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 Dipak Bharade

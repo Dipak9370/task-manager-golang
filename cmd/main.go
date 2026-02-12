@@ -1,12 +1,14 @@
 package main
 
-// @title Task Manager API
-// @version 1.0
-// @description Task Management Service in Go
-// @host localhost:8080
-// @BasePath /
-
 import (
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	config "task-manager/confic"
 	"task-manager/handler"
 	"task-manager/middleware"
@@ -25,29 +27,57 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title Task Manager API
+// @version 1.0
+// @description Task Management Service in Go
+// @host localhost:8080
+// @BasePath /
+
 func main() {
-	config.LoadEnv()
+	// Load env
+	cfg := config.LoadEnv()
 
-	db, _ := gorm.Open(postgres.Open(viper.GetString("DB_URL")), &gorm.Config{})
-	db.AutoMigrate(&models.Task{}, &models.User{})
+	// DB connection
+	db, err := gorm.Open(postgres.Open(cfg.DBUrl), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect database: %v", err)
+	}
 
+	// Auto migrate
+	if err := db.AutoMigrate(&models.Task{}, &models.User{}); err != nil {
+		log.Fatalf("migration failed: %v", err)
+	}
+
+	// Repositories
 	taskRepo := &repository.TaskRepository{DB: db}
-	taskService := &service.TaskService{Repo: taskRepo}
-
-	worker.StartWorker(taskRepo, viper.GetInt("AUTO_COMPLETE_MINUTES"))
-
-	r := gin.Default()
-
-	// routes
 	userRepo := &repository.UserRepository{DB: db}
+
+	// Services
+	taskService := &service.TaskService{Repo: taskRepo}
 	authService := &service.AuthService{Repo: userRepo}
 
-	authHandler := &handler.AuthHandler{Service: authService}
+	// Handlers
 	taskHandler := &handler.TaskHandler{Service: taskService}
+	authHandler := &handler.AuthHandler{Service: authService}
 
+	// Start background worker with context
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go worker.StartWorker(ctx, taskRepo, cfg.AutoCompleteMinutes)
+
+	// Gin setup
+	r := gin.New()
+	r.Use(gin.Recovery())
+	r.Use(middleware.Logger())
+
+	// Swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Public routes
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
 
+	// Protected routes
 	auth := r.Group("/tasks")
 	auth.Use(middleware.JWTMiddleware())
 	{
@@ -57,27 +87,40 @@ func main() {
 		auth.DELETE("/:id", taskHandler.DeleteTask)
 	}
 
-	r.Use(middleware.Logger())
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	port := viper.GetString("PORT")
 
-	r.Run(":8080")
+	// HTTP server (for graceful shutdown)
+	srv := &http.Server{
+		Addr:    ":" + cfg.Port,
+		Handler: r,
+	}
 
-	// srv := &http.Server{
-	// 	Addr:    ":8080",
-	// 	Handler: r,
-	// }
+	// Run server in goroutine
+	if port == "" {
+		port = "8080"
+	}
 
-	// go func() {
-	// 	srv.ListenAndServe()
-	// }()
+	go func() {
+		log.Println("Server started on port", port)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
 
-	// quit := make(chan os.Signal, 1)
-	// signal.Notify(quit, os.Interrupt)
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown signal received")
 
-	// <-quit
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
+	cancel() // stop worker
 
-	// srv.Shutdown(ctx)
+	ctxTimeout, cancelTimeout := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelTimeout()
 
+	if err := srv.Shutdown(ctxTimeout); err != nil {
+		log.Fatalf("server shutdown failed: %v", err)
+	}
+
+	log.Println("Server exited properly")
 }
