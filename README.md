@@ -65,12 +65,17 @@ AUTO_COMPLETE_MINUTES=2
 
 ```bash
 go mod tidy
+
+make run
+
 go run cmd/main.go
 ```
 
 Swagger UI:
 
 ```
+make swag
+
 http://localhost:8080/swagger/index.html
 ```
 
@@ -125,6 +130,8 @@ This demonstrates Go concurrency using goroutines and channels without blocking 
 Service layer is tested using repository interfaces and mocks.
 
 ```bash
+make test
+
 go test ./... -v
 ```
 
@@ -157,6 +164,8 @@ Interactive API documentation available at:
 * Interfaces for testability
 * Context passed across layers
 * Clean separation of concerns
+* raceful shutdown using context and http.Server
+* Mefile for consistent development workflow
 
 ---
 
