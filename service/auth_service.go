@@ -14,6 +14,10 @@ type AuthService struct {
 	Repo repository.IUserRepository
 }
 
+func NewAuthService(repo repository.IUserRepository) *AuthService {
+	return &AuthService{Repo: repo}
+}
+
 func (s *AuthService) Register(ctx context.Context, email, password, role string) error {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 

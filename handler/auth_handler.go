@@ -11,6 +11,10 @@ type AuthHandler struct {
 	Service *service.AuthService
 }
 
+func NewAuthHandler(service *service.AuthService) *AuthHandler {
+	return &AuthHandler{Service: service}
+}
+
 // Register godoc
 //	@Summary		Register new user
 //	@Description	Register user with email, password and role

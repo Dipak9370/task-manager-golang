@@ -12,6 +12,10 @@ type TaskHandler struct {
 	Service *service.TaskService
 }
 
+func NewTaskHandler(service *service.TaskService) *TaskHandler {
+	return &TaskHandler{Service: service}
+}
+
 // CreateTask godoc
 //	@Summary	Create task
 //	@Tags		Tasks

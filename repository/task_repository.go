@@ -12,6 +12,20 @@ type TaskRepository struct {
 	DB *gorm.DB
 }
 
+// DeleteWithAccess implements [ITaskRepository].
+func (r *TaskRepository) DeleteWithAccess(ctx context.Context, id string, userID string, role string) (bool, error) {
+	panic("unimplemented")
+}
+
+// GetByIDWithAccess implements [ITaskRepository].
+func (r *TaskRepository) GetByIDWithAccess(ctx context.Context, id string, userID string, role string) (*models.Task, error) {
+	panic("unimplemented")
+}
+
+func NewTaskRepository(db *gorm.DB) *TaskRepository {
+	return &TaskRepository{DB: db}
+}
+
 func (r *TaskRepository) AutoCompleteTasks(minutes int) error {
 	cutoff := time.Now().Add(-time.Duration(minutes) * time.Minute)
 
